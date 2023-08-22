@@ -1,6 +1,6 @@
 # terraform-ts-mode.el
 
-Major mode of [Terraform](http://www.terraform.io/) configuration file. This mode uses Tresitter for Syntac highlighting and eglot as LSP
+Major mode of [Terraform](http://www.terraform.io/) configuration file. This mode uses Tresitter for syntax highlighting and eglot as LSP
 
 
 ## Installation
