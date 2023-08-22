@@ -1,4 +1,4 @@
-;;; terraform-ts-mode.el --- Terraform Treesitter Mode -*- lexical-binding: t -*-
+;;; my-cabal-mode.el --- My Cabal mode -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;; Code:
 
@@ -164,33 +164,15 @@
               (window-start (window-start)))
           (erase-buffer)
           (insert-buffer-substring buf)
-          (when (/= terraform-indent-level 2)
-            (indent-region (point-min) (point-max)))
           (goto-char point)
           (set-window-start nil window-start))
       (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
     (kill-buffer buf)))
 
-(defun terraform-format-region ()
-  "Rewrite current region in a canonical format using terraform fmt."
-  (interactive)
-  (let ((buf (get-buffer-create "*terraform-fmt*")))
-    (when (use-region-p)
-    (if (zerop (call-process-region (region-beginning) (region-end)
-                                    "terraform" nil buf nil "fmt" "-"))
-        (let ((point (region-end))
-              (window-start (region-beginning)))
-          (delete-region window-start point)
-          (insert-buffer-substring buf)
-          (goto-char point)
-          (set-window-start nil window-start))
-      (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
-    (kill-buffer buf))))
-
 (define-minor-mode terraform-format-on-save-mode
   "Run terraform-format-buffer before saving current buffer."
   :lighter ""
-  (if terraform-format-on-save-mode
+  (if terraform-ts-format-on-save
       (add-hook 'before-save-hook #'terraform-format-buffer nil t)
     (remove-hook 'before-save-hook #'terraform-format-buffer t)))
 
@@ -228,7 +210,7 @@
 
   ;; Navigation.
   ;; (setq-local treesit-defun-type-regexp (rx (or "pair" "object")))
-  ;; (setq-local treesit-defun-name-function #'terraform-ts-mode--defun-name)
+  ;; (setq-local treesit-defun-name-function #'json-ts-mode--defun-name)
   ;; (setq-local treesit-sentence-type-regexp "pair")
 
   ;; Font-lock
