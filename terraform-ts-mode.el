@@ -97,9 +97,9 @@
    :feature 'expressions 
    `(
      ((expression (variable_expr (identifier) @font-lock-keyword-face) (get_attr (identifier) @font-lock-property-name-face))
-       (:match ,(rx-to-string `(or ,@terraform-ts--builtin-expressions)) @font-lock-keyword-face)) ; local, each and count
+       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-expressions) eol)) @font-lock-keyword-face)) ; local, each and count
      ((expression (variable_expr (identifier) @font-lock-keyword-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* )
-       (:match ,(rx-to-string `(or ,@terraform-ts--named-expressions)) @font-lock-keyword-face)) ; module and vas
+       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--named-expressions) eol)) @font-lock-keyword-face)) ; module and var
      ((expression (variable_expr (identifier) @font-lock-type-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* ))
     )
    
@@ -112,7 +112,7 @@
    :language 'terraform
    :feature 'blocks
    `(
-     ((attribute (identifier) @font-lock-builtin-face) (:match ,(rx-to-string `(or ,@terraform-ts--builtin-attributes)) @font-lock-builtin-face))
+     ((attribute (identifier) @font-lock-builtin-face) (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-attributes) eol)) @font-lock-builtin-face))
      ((attribute (identifier) @font-lock-property-name-face))
      )
    
