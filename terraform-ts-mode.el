@@ -146,12 +146,15 @@
   )
   "Tree-sitter font-lock settings.")
 
-
 (defvar terraform-ts--indent-rules
   `((terraform
-     ((node-is "}") parent-bol 0)
-     ((node-is "]") parent-bol 0)
+     ((node-is "block_end") parent-bol 0)
+     ((node-is "object_end") parent-bol 0)
+     ((node-is ")") parent-bol 0)
+     ((node-is "touple_end") parent-bol 0)
+     ((parent-is "function_call") parent-bol ,terraform-ts-indent-level)
      ((parent-is "object") parent-bol ,terraform-ts-indent-level)
+     ((parent-is "touple") parent-bol ,terraform-ts-indent-level)
      ((parent-is "block") parent-bol ,terraform-ts-indent-level))))
 
 (defun terraform-format-buffer ()
