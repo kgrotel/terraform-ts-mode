@@ -11,7 +11,7 @@ Treesitter Grammar needs to be installed like that:
 
 ```
   (setq treesit-language-source-alist
-   '((terraform . ("https://github.com/MichaHoffmann/tree-sitter-hcl"  "`main"  "dialects/terraform/src"))))
+   '((terraform . ("https://github.com/MichaHoffmann/tree-sitter-hcl"  "main"  "dialects/terraform/src"))))
 ```
 
 Don´t forget to to run ```(treesit-install-language-grammar)```
