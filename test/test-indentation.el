@@ -22,7 +22,7 @@
 ;;; Code:
 
 (require 'ert)
-(require 'terraform-mode)
+(require 'terraform-ts-mode)
 
 (ert-deftest indentation--no-indentation ()
   "No indentation case"

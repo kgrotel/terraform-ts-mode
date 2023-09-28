@@ -22,7 +22,7 @@
 ;;; Code:
 
 (require 'ert)
-(require 'terraform-mode)
+(require 'terraform-ts-mode)
 
 (ert-deftest font-lock--boolean-keywords ()
   "Syntax highlight of `boolean' keywords"
