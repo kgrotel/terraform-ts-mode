@@ -167,12 +167,6 @@
      ((attribute (identifier) @terraform-builtin-face) (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-attributes) eol)) @terraform-builtin-face))
      ((attribute (identifier) @terraform-variable-name-face))
      )
-
-   :language 'terraform
-   :feature 'blocks
-   '(
-     ((block ( block (identifier) @terraform-builtin-face )))
-     )
    
    :language 'terraform
    :feature 'blocks
