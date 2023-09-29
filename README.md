@@ -6,29 +6,23 @@
 
 Major mode of [Terraform](http://www.terraform.io/) configuration file. This mode uses Tresitter for syntax highlighting and eglot as LSP
 
-
 ## Installation
 
 currently only manual installation is supported. eglot requires a running terraform-ls. The mode will attach to it automatically and configure eglot accordingly.
 
-Treesitter Grammar needs to be installed like that:
-
-```
-  (setq treesit-language-source-alist
-   '((terraform . ("https://github.com/MichaHoffmann/tree-sitter-hcl"  "main"  "dialects/terraform/src"))))
-```
-
-Don´t forget to to run ```(treesit-install-language-grammar)```
+In case treesitter terraform grammar is not installed it will be installed.
 
 ## Features
 
 - Syntax highlighting
 - Indentation
 - format on save (via eglot)
+- Code Suggestions
 
-## Notes
+## Notes & Ussues
 
 - regarding iddentation: terraform-ls doesnt support indentation aside 2 which meansindentation should not be changed. Never the less treesit-identation is set but only correct identation while editing
+- currently only treesit default imenu is used which is not fitting very well
 
 ## Contribute
 
