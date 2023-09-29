@@ -1,8 +1,8 @@
-;;; test-helper.el --- helper for testing terraform-mode
+;;; helper-test.el --- helper for testing terraform-mode
 
-;; Copyright (C) 2017 by Syohei YOSHIDA
+;; Copyright (C) 2023 by Kai Groteluschen 
 
-;; Author: Syohei YOSHIDA <syohex@gmail.com>
+;; Author: Kai Groteluschen <kgr@gnotes.de>
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;; cudos go to Syohei Yoshida i initaly took that from (terraform-mode)
 
 ;;; Code:
 
@@ -46,4 +47,5 @@
 (defun face-at-cursor-p (face)
   (eq (face-at-point) face))
 
+(provide 'helper-test)
 ;;; test-helper.el ends here

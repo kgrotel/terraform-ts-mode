@@ -1,8 +1,8 @@
-;;; test-indentation.el --- test for indentation
+;;; indentation-test.el --- test for indentation
 
-;; Copyright (C) 2017 by Syohei YOSHIDA
+;; Copyright (C) 2023 by Kai Groteluschen 
 
-;; Author: Syohei YOSHIDA <syohex@gmail.com>
+;; Author: Kai Groteluschen <kgr@gnotes.de>
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;; cudos go to Syohei Yoshida i initaly took that from (terraform-mode)
 
 ;;; Code:
 
@@ -158,4 +159,5 @@ array_var [
       (call-interactively 'indent-for-tab-command)
       (should (= (current-indentation) 4)))))
 
-;;; test-indentation.el ends here
+(provide 'indentation-test)
+;;; indentation-test.el ends here
