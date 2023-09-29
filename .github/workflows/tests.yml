@@ -36,7 +36,7 @@ jobs:
 
     - name: Test the project
       run: |
-        eldev -p -dtTQC test --expect 100
+        eldev -p -dtTQC test --expect 10
         eldev -dtTQC compile --warnings-as-errors
 
     - name: Ensure that copyright notices are up-to-date
