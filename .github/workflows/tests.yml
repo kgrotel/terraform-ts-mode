@@ -1,0 +1,43 @@
+name: Tests
+
+on:
+  push:
+    paths-ignore: ['**.md', '**.adoc', "**.org"]
+  pull_request:
+    paths-ignore: ['**.md', '**.adoc', "**.org"]
+
+jobs:
+  test:
+    runs-on: ${{matrix.os}}
+    continue-on-error: ${{matrix.emacs_version == 'snapshot'}}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        emacs_version: ['29.1', 'snapshot']
+        include:
+          - os: macos-latest
+            emacs_version: '29.1'
+          - os: windows-latest
+            emacs_version: '29.1'
+
+    steps:
+    - name: Set up Emacs
+      uses: jcs090218/setup-emacs@master
+      with:
+        version: ${{matrix.emacs_version}}
+
+    - name: Install Eldev
+      uses: emacs-eldev/setup-eldev@v1
+
+    - name: Check out the source code
+      uses: actions/checkout@v4
+
+    - name: Test the project
+      run: |
+        eldev -p -TC test --expect 9
+        eldev -vTC compile --warnings-as-errors
+
+    - name: Ensure that copyright notices are up-to-date
+      run: |
+        eldev -p -vTC doctor up-to-date-copyright

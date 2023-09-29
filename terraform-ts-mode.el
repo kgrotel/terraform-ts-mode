@@ -1,10 +1,35 @@
-;;; my-cabal-mode.el --- My Cabal mode -*- lexical-binding: t -*-
+;;; terraform-ts-mode.el --- Terraform major mode using Treesitter and eglot  -*- lexical-binding: t -*-
+
+;;; Copyright (C) 2022-2027 Kai Grotelüschen
+
+;; Author:     Kai Grotelueschen <kgr@gnotes.de>
+;; Maintainer: Kai Grotelueschen <kgr@gnotes.de>
+;; Version:    0.4
+;; Keywords:   elisp, extensions
+;; Homepage:   https://github.com/kgrotel/terraform-ts-mode
+;; Package-Requires: ((emacs "29.1"))
+
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of
+;; the License, or (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see http://www.gnu.org/licenses.
+
+
 ;;; Commentary:
+
+;; This is a terraform mode using treesit. There are still quite some
+;; Isues with using Treesitter for imenu and Highlight so any kind of
+;; help is greatly appreaciated
+
 ;;; Code:
-
-;; TODO
-;; - format, run terraform-fmt on buffer
-
 
 (require 'treesit)
 (require 'eglot)
@@ -22,12 +47,13 @@
   :link '(url-link "https://www.terraform.io/")
   :group 'languages)
 
+;; module customizions
+
 (defcustom terraform-ts-mode-hook nil
   "Hook called by `terraform-ts-mode'."
   :type 'hook
   :group 'terraform)
 
-;; CUSTOM VAR
 (defcustom terraform-ts-indent-level 2
   "The tab width to use when indenting."
   :type 'integer
@@ -37,6 +63,30 @@
   "Format buffer on save"
   :type 'boolean
   :group 'terraform)
+
+;; module facses
+
+(defface terraform-resource-type-face
+  '((t :inherit font-lock-type-face))
+  "Face for resource names."
+  :group 'terraform-mode)
+
+(defface terraform-resource-name-face
+  '((t :inherit font-lock-function-name-face))
+  "Face for resource names."
+  :group 'terraform-mode)
+
+(defface terraform-builtin-face
+  '((t :inherit font-lock-builtin-face))
+  "Face for builtins."
+  :group 'terraform-mode)
+
+(defface terraform-variable-name-face
+  '((t :inherit font-lock-variable-name-face))
+  "Face for varriables."
+  :group 'terraform-mode)
+
+;; mode vars 
 
 (defvar terraform-ts--syntax-table
   (let ((table (make-syntax-table)))
@@ -50,9 +100,11 @@
     table)
   "Syntax table for `terraform-ts-mode'.")
 
+;; Imenu
+
 ;; MODE VARS
 (defvar terraform-ts--builtin-attributes
-  '("for_each" "count" "source" "type" "default" "providers")
+  '("for_each" "count" "source" "type" "default" "providers" "provider")
   "Terraform builtin attributes for tree-sitter font-locking.")
 
 (defvar terraform-ts--builtin-expressions 
@@ -96,11 +148,11 @@
    :language 'terraform
    :feature 'expressions 
    `(
-     ((expression (variable_expr (identifier) @font-lock-keyword-face) (get_attr (identifier) @font-lock-property-name-face))
-       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-expressions) eol)) @font-lock-keyword-face)) ; local, each and count
-     ((expression (variable_expr (identifier) @font-lock-keyword-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* )
-       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--named-expressions) eol)) @font-lock-keyword-face)) ; module and var
-     ((expression (variable_expr (identifier) @font-lock-type-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* ))
+     ((expression (variable_expr (identifier) @terraform-builtin-face) (get_attr (identifier) @font-lock-property-name-face))
+       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-expressions) eol)) @terraform-builtin-face)) ; local, each and count
+     ((expression (variable_expr (identifier) @terraform-builtin-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* )
+       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--named-expressions) eol)) @terraform-builtin-face)) ; module and var
+     ((expression (variable_expr (identifier) @terraform-resource-type-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* ))
     )
    
    :language 'terraform
@@ -112,20 +164,20 @@
    :language 'terraform
    :feature 'blocks
    `(
-     ((attribute (identifier) @font-lock-builtin-face) (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-attributes) eol)) @font-lock-builtin-face))
-     ((attribute (identifier) @font-lock-property-name-face))
+     ((attribute (identifier) @terraform-builtin-face) (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-attributes) eol)) @terraform-builtin-face))
+     ((attribute (identifier) @terraform-variable-name-face))
      )
    
    :language 'terraform
    :feature 'blocks
    '(
-     ((block (identifier) @font-lock-keyword-face (string_lit (template_literal) @font-lock-type-face) (string_lit (template_literal) @font-lock-function-name-face)))
+     ((block (identifier) @terraform-builtin-face (string_lit (template_literal) @font-lock-type-face) (string_lit (template_literal) @font-lock-function-name-face)))
     )
    
    :language 'terraform
    :feature 'blocks
    '(
-     ((block (identifier) @font-lock-keyword-face (string_lit (template_literal) @font-lock-function-name-face) :?))
+     ((block (identifier) @terraform-builtin-face (string_lit (template_literal) @font-lock-function-name-face) :?))
     )
 
    :language 'terraform
@@ -151,56 +203,41 @@
      ((node-is "block_end") parent-bol 0)
      ((node-is "object_end") parent-bol 0)
      ((node-is ")") parent-bol 0)
-     ((node-is "touple_end") parent-bol 0)
+     ((node-is "tuple_end") parent-bol 0)
      ((parent-is "function_call") parent-bol ,terraform-ts-indent-level)
      ((parent-is "object") parent-bol ,terraform-ts-indent-level)
-     ((parent-is "touple") parent-bol ,terraform-ts-indent-level)
+     ((parent-is "tuple") parent-bol ,terraform-ts-indent-level)
      ((parent-is "block") parent-bol ,terraform-ts-indent-level))))
 
-(defun terraform-format-buffer ()
-  "Rewrite current buffer in a canonical format using terraform fmt."
-  (interactive)
-  (let ((buf (get-buffer-create "*terraform-fmt*")))
-    (if (zerop (call-process-region (point-min) (point-max)
-                                    "terraform" nil buf nil "fmt" "-no-color" "-"))
-        (let ((point (point))
-              (window-start (window-start)))
-          (erase-buffer)
-          (insert-buffer-substring buf)
-          (goto-char point)
-          (set-window-start nil window-start))
-      (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
-    (kill-buffer buf)))
-
-(define-minor-mode terraform-format-on-save-mode
-  "Run terraform-format-buffer before saving current buffer."
-  :lighter ""
-  (if terraform-ts-format-on-save
-      (add-hook 'before-save-hook #'terraform-format-buffer nil t)
-    (remove-hook 'before-save-hook #'terraform-format-buffer t)))
-
-;; MODE
+;; Major Mode def 
 (define-derived-mode terraform-ts-mode prog-mode "Terraform"
   "Terraform Tresitter Mode"
   :group 'terraform
   :syntax-table terraform-ts--syntax-table
 
-  (when terraform-ts-format-on-save
-    (terraform-format-on-save-mode 1))
-  
+  ;; treesit - add terraform grammar
+  (add-to-list 'treesit-language-source-alist
+      '(terraform . ("https://github.com/MichaHoffmann/tree-sitter-hcl"  "main"  "dialects/terraform/src")))
+
+  ;; treesit - check grammar is readdy if not most likly in need to be installed
   (unless (treesit-ready-p 'terraform)
-    (error "Tree-sitter for Terraform isn't available"))
+    (treesit-install-language-grammar 'terraform))
 
+  ;; treesit - init parser
   (treesit-parser-create 'terraform)
-
-  ;; Eglot integration
+  
+  ;; eglot - integrate mode into terraform-ts-mode
   (add-hook 'terraform-ts-mode-hook 'eglot-ensure)
   (with-eval-after-load 'eglot
     (put 'terraform-ts-mode 'eglot-language-id "terraform")
     (add-to-list 'eglot-server-programs
-       '(terraform-ts-mode . ("terraform-ls" "serve"))))
-  ;; replaced -> (terraform-ts-mode :languageId terraform) 
-  ;; Comments.
+		 '(terraform-ts-mode . ("terraform-ls" "serve"))))
+
+  ;; eglot - use format on save
+  (if terraform-ts-format-on-save
+    (add-hook 'before-save-hook 'eglot-format)
+    (remove-hook 'before-save-hook 'eglot-format))
+  
   (setq-local comment-start "#")
   (setq-local comment-use-syntax t)
   (setq-local comment-start-skip "\\(//+\\|/\\*+\\)\\s *")
@@ -223,13 +260,14 @@
 					       ()))
   (setq-local treesit-font-lock-settings terraform-ts--treesit-font-lock-rules)
 
-  ;; Imenu.
-  (setq-local treesit-simple-imenu-settings '((nil "\\`pair\\'" nil nil)))
-  
+  ;; Imenu ... todo
+  ;; (setq-local treesit-simple-imenu-settings
+  ;;	       `((nil "block" nil nil)))
+   
   (treesit-major-mode-setup))
   
-;;;###autoload
-(if (treesit-ready-p 'terraform) (add-to-list 'auto-mode-alist '("\\.tf\\(vars\\)?\\'" . terraform-ts-mode)))
+;;; autoload
+(add-to-list 'auto-mode-alist '("\\.tf\\(vars\\)?\\'" . terraform-ts-mode))
  
 (provide 'terraform-ts-mode)
 ;;; terraform-ts-mode.el ends here
