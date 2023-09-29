@@ -76,7 +76,7 @@ foo = 10
 
     (forward-cursor-on "foo")
     (call-interactively 'indent-for-tab-command)
-    (should (= (current-indentation) terraform-indent-level))))
+    (should (= (current-indentation) terraform-ts-indent-level))))
 
 
 (ert-deftest indentation--indentation-into-block--in-variable-block ()
@@ -89,7 +89,7 @@ foo = 10
 
     (forward-cursor-on "foo")
     (call-interactively 'indent-for-tab-command)
-    (should (= (current-indentation) terraform-indent-level))))
+    (should (= (current-indentation) terraform-ts-indent-level))))
 
 (ert-deftest indentation--indentation-into-block--in-resource-block ()
   (with-terraform-temp-buffer
@@ -101,7 +101,7 @@ foo = 10
 
     (forward-cursor-on "foo")
     (call-interactively 'indent-for-tab-command)
-    (should (= (current-indentation) terraform-indent-level))))
+    (should (= (current-indentation) terraform-ts-indent-level))))
 
 (ert-deftest indentation--indentation-into-nested-block ()
   "Indent into nested blocks"
@@ -118,7 +118,7 @@ from_port = 22
     (let ((cur-indent (current-indentation)))
       (forward-cursor-on "from_port")
       (call-interactively 'indent-for-tab-command)
-      (should (= (current-indentation) (+ cur-indent terraform-indent-level))))))
+      (should (= (current-indentation) (+ cur-indent terraform-ts-indent-level))))))
 
 (ert-deftest indentation--map-indentation ()
   "Indent for map entry"
@@ -131,7 +131,7 @@ key = val
 
     (forward-cursor-on "key")
     (call-interactively 'indent-for-tab-command)
-    (should (= (current-indentation) terraform-indent-level))))
+    (should (= (current-indentation) terraform-ts-indent-level))))
 
 (ert-deftest indentation--array-indentation ()
   "Indent for array element"

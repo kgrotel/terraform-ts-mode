@@ -24,8 +24,11 @@ Don´t forget to to run ```(treesit-install-language-grammar)```
 
 - Syntax highlighting
 - Indentation
-- imenu
-- Formatting using `terraform fmt`
+- format on save (via eglot)
+
+## Notes
+
+- regarding iddentation: terraform-ls doesnt support indentation aside 2 which meansindentation should not be changed. Never the less treesit-identation is set but only correct identation while editing
 
 ## Contribute
 
