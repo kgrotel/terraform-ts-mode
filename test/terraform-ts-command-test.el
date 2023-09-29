@@ -23,7 +23,7 @@
 
 (require 'ert)
 (require 'cl-lib)
-(require 'terrafor-ts-mode)
+(require 'terraform-ts-mode)
 
 (ert-deftest command--beginning-of-defun--from-within-block ()
   "Move to beginning-of-defun"
