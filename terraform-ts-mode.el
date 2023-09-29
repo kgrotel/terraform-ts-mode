@@ -170,8 +170,8 @@
    :language 'terraform
    :feature 'blocks
    `(
-     ((attribute (identifier) @font-lock-builtin-face) (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-attributes) eol)) @font-lock-builtin-face))
-     ((attribute (identifier) @font-lock-property-name-face))
+     ((attribute (identifier) @terraform-builtin-face) (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-attributes) eol)) @terraform-builtin-face))
+     ((attribute (identifier) @fterraform-variable-name-face))
      )
    
    :language 'terraform
