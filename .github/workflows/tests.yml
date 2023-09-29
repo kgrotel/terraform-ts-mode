@@ -1,26 +1,44 @@
 name: Tests
-on: [push, pull_request]
+
+on:
+  push:
+    paths-ignore: ['**.md', '**.adoc', "**.org"]
+  pull_request:
+    paths-ignore: ['**.md', '**.adoc', "**.org"]
+
 jobs:
-  run_tests:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ${{matrix.os}}
+    continue-on-error: ${{matrix.emacs_version == 'snapshot'}}
+
     strategy:
       matrix:
-        emacs_version: ["29.1"]
+        os: [ubuntu-latest]
+        emacs_version: ['29.1',
+                        'snapshot']
+        include:
+          - os: macos-latest
+            emacs_version: '29.1'
+          - os: windows-latest
+            emacs_version: '29.1'
+
     steps:
-      # This command allows us to execute cask below. Refer to issue:
-      #  https://github.com/conao3/setup-cask/issues/6
-      - run: echo "ACTIONS_ALLOW_UNSECURE_COMMANDS=true" >> $GITHUB_ENV
+    - name: Set up Emacs
+      uses: jcs090218/setup-emacs@master
+      with:
+        version: ${{matrix.emacs_version}}
 
-      - uses: purcell/setup-emacs@master
-        with:
-          version: ${{ matrix.emacs_version }}
+    - name: Install Eldev
+      uses: emacs-eldev/setup-eldev@v1
 
-      - uses: conao3/setup-cask@master
-        with:
-          version: '0.8.4'
-          
-      - uses: actions/checkout@v3
-      
-      - run: |
-          cask install
-          make test
+    - name: Check out the source code
+      uses: actions/checkout@v4
+
+    - name: Test the project
+      run: |
+        eldev -p -dtTQC test --expect 100
+        eldev -dtTQC compile --warnings-as-errors
+
+    - name: Ensure that copyright notices are up-to-date
+      run: |
+        eldev -p -dvQTC doctor up-to-date-copyright

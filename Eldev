@@ -1,0 +1,23 @@
+; -*- mode: emacs-lisp; lexical-binding: t -*-
+
+(eldev-require-version "1.2")
+
+(eldev-use-plugin 'undercover)
+
+;; (defvar iter2-test-debug nil)
+
+;; (eldev-defbooloptions iter2-test-debug iter2-test-dont-debug iter2-test-debug
+;;   ("Print `iter2' form converter's debug information"
+;;   :options       (-d --debug)
+;;   :for-command   test)
+;;  ("Don't print converter's debug information"
+;;   :options       (-D --no-debug))
+;;   :for-command   test)
+
+;;(add-hook 'eldev-test-ert-hook
+;;          (lambda (_selectors)
+;;            (require 'iter2)
+;;            (iter2--debug-converter iter2-test-debug)))
+
+(setf eldev-release-post-release-commit-message "Post-release version bump."
+      eldev-release-post-release-commit 'eldev-release-next-snapshot-version-unless-already-snapshot)
