@@ -2,8 +2,8 @@
 
 ;;; Copyright (C) 2022-2027 Kai Grotelüschen
 
-;; Author:     Kai Grotelüschen <kgr@gnotes.de>
-;; Maintainer: Kai Grotelüschen <kgr@gnotes.de>
+;; Author:     Kai Grotelueschen <kgr@gnotes.de>
+;; Maintainer: Kai Grotelueschen <kgr@gnotes.de>
 ;; Version:    0.4
 ;; Keywords:   elisp, extensions
 ;; Homepage:   https://github.com/kgrotel/terraform-ts-mode
@@ -63,6 +63,9 @@
   :type 'boolean
   :group 'terraform)
 
+(defcustom terraform-ts-setup-treesit t
+  "setting up treesitter terraform grammar")
+
 (defvar terraform-ts--syntax-table
   (let ((table (make-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
@@ -75,9 +78,11 @@
     table)
   "Syntax table for `terraform-ts-mode'.")
 
+;; Imenu
+
 ;; MODE VARS
 (defvar terraform-ts--builtin-attributes
-  '("for_each" "count" "source" "type" "default" "providers")
+  '("for_each" "count" "source" "type" "default" "providers" "provider")
   "Terraform builtin attributes for tree-sitter font-locking.")
 
 (defvar terraform-ts--builtin-expressions 
@@ -182,50 +187,35 @@
      ((parent-is "touple") parent-bol ,terraform-ts-indent-level)
      ((parent-is "block") parent-bol ,terraform-ts-indent-level))))
 
-(defun terraform-format-buffer ()
-  "Rewrite current buffer in a canonical format using terraform fmt."
-  (interactive)
-  (let ((buf (get-buffer-create "*terraform-fmt*")))
-    (if (zerop (call-process-region (point-min) (point-max)
-                                    "terraform" nil buf nil "fmt" "-no-color" "-"))
-        (let ((point (point))
-              (window-start (window-start)))
-          (erase-buffer)
-          (insert-buffer-substring buf)
-          (goto-char point)
-          (set-window-start nil window-start))
-      (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
-    (kill-buffer buf)))
-
-(define-minor-mode terraform-format-on-save-mode
-  "Run terraform-format-buffer before saving current buffer."
-  :lighter ""
-  (if terraform-ts-format-on-save
-      (add-hook 'before-save-hook #'terraform-format-buffer nil t)
-    (remove-hook 'before-save-hook #'terraform-format-buffer t)))
-
 ;; MODE
 (define-derived-mode terraform-ts-mode prog-mode "Terraform"
   "Terraform Tresitter Mode"
   :group 'terraform
   :syntax-table terraform-ts--syntax-table
 
-  (when terraform-ts-format-on-save
-    (terraform-format-on-save-mode 1))
-  
+  ;; treesit - add terraform grammar
+  (add-to-list 'treesit-language-source-alist
+      '(terraform . ("https://github.com/MichaHoffmann/tree-sitter-hcl"  "main"  "dialects/terraform/src")))
+
+  ;; treesit - check grammar is readdy if not most likly in need to be installed
   (unless (treesit-ready-p 'terraform)
-    (error "Tree-sitter for Terraform isn't available"))
+    (treesit-install-language-grammar terraform))
 
+  ;; treesit - init parser
   (treesit-parser-create 'terraform)
-
-  ;; Eglot integration
+  
+  ;; eglot integration
   (add-hook 'terraform-ts-mode-hook 'eglot-ensure)
   (with-eval-after-load 'eglot
     (put 'terraform-ts-mode 'eglot-language-id "terraform")
     (add-to-list 'eglot-server-programs
-       '(terraform-ts-mode . ("terraform-ls" "serve"))))
-  ;; replaced -> (terraform-ts-mode :languageId terraform) 
-  ;; Comments.
+		 '(terraform-ts-mode . ("terraform-ls" "serve"))))
+
+  ;; eglot integration - format on save
+  (if terraform-ts-format-on-save
+    (add-hook 'before-save-hook 'eglot-format)
+    (remove-hook 'before-save-hook 'eglot-format) ))
+  
   (setq-local comment-start "#")
   (setq-local comment-use-syntax t)
   (setq-local comment-start-skip "\\(//+\\|/\\*+\\)\\s *")
@@ -248,14 +238,14 @@
 					       ()))
   (setq-local treesit-font-lock-settings terraform-ts--treesit-font-lock-rules)
 
-  ;; Imenu.
-  (setq-local treesit-simple-imenu-settings '((nil "\\`pair\\'" nil nil)))
-  
+  ;; Imenu ... todo
+  ;; (setq-local treesit-simple-imenu-settings
+  ;;	       `((nil "block" nil nil)))
+   
   (treesit-major-mode-setup))
   
 ;;;###autoload
 (if (treesit-ready-p 'terraform) (add-to-list 'auto-mode-alist '("\\.tf\\(vars\\)?\\'" . terraform-ts-mode)))
  
 (provide 'terraform-ts-mode)
-
 ;;; terraform-ts-mode.el ends here
