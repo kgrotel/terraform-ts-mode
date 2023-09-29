@@ -178,10 +178,10 @@
      ((node-is "block_end") parent-bol 0)
      ((node-is "object_end") parent-bol 0)
      ((node-is ")") parent-bol 0)
-     ((node-is "touple_end") parent-bol 0)
+     ((node-is "tuple_end") parent-bol 0)
      ((parent-is "function_call") parent-bol ,terraform-ts-indent-level)
      ((parent-is "object") parent-bol ,terraform-ts-indent-level)
-     ((parent-is "touple") parent-bol ,terraform-ts-indent-level)
+     ((parent-is "tuple") parent-bol ,terraform-ts-indent-level)
      ((parent-is "block") parent-bol ,terraform-ts-indent-level))))
 
 ;; Major Mode def 
@@ -196,7 +196,7 @@
 
   ;; treesit - check grammar is readdy if not most likly in need to be installed
   (unless (treesit-ready-p 'terraform)
-    (treesit-install-language-grammar 'terraform))
+    (treesit-install-language-grammar terraform))
 
   ;; treesit - init parser
   (treesit-parser-create 'terraform)
