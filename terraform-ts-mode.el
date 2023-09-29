@@ -71,21 +71,15 @@
   "Face for resource names."
   :group 'terraform-mode)
 
-(define-obsolete-face-alias 'terraform--resource-type-face 'terraform-resource-type-face "1.0.0")
-
 (defface terraform-resource-name-face
   '((t :inherit font-lock-function-name-face))
   "Face for resource names."
   :group 'terraform-mode)
 
-(define-obsolete-face-alias 'terraform--resource-name-face 'terraform-resource-name-face "1.0.0")
-
 (defface terraform-builtin-face
   '((t :inherit font-lock-builtin-face))
   "Face for builtins."
   :group 'terraform-mode)
-
-(define-obsolete-face-alias 'terraform--builtin-face 'terraform-builtin-face "1.0.0")
 
 (defface terraform-variable-name-face
   '((t :inherit font-lock-variable-name-face))
@@ -154,11 +148,11 @@
    :language 'terraform
    :feature 'expressions 
    `(
-     ((expression (variable_expr (identifier) @font-lock-keyword-face) (get_attr (identifier) @font-lock-property-name-face))
-       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-expressions) eol)) @font-lock-keyword-face)) ; local, each and count
-     ((expression (variable_expr (identifier) @font-lock-keyword-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* )
-       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--named-expressions) eol)) @font-lock-keyword-face)) ; module and var
-     ((expression (variable_expr (identifier) @font-lock-type-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* ))
+     ((expression (variable_expr (identifier) @terraform-builtin-face) (get_attr (identifier) @font-lock-property-name-face))
+       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-expressions) eol)) @terraform-builtin-face)) ; local, each and count
+     ((expression (variable_expr (identifier) @terraform-builtin-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* )
+       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--named-expressions) eol)) @terraform-builtin-face)) ; module and var
+     ((expression (variable_expr (identifier) @terraform-resource-type-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* ))
     )
    
    :language 'terraform
@@ -172,6 +166,12 @@
    `(
      ((attribute (identifier) @terraform-builtin-face) (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-attributes) eol)) @terraform-builtin-face))
      ((attribute (identifier) @terraform-variable-name-face))
+     )
+
+   :language 'terraform
+   :feature 'blocks
+   '(
+     ((block ( block (identifier) @terraform-builtin-face )))
      )
    
    :language 'terraform

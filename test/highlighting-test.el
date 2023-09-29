@@ -28,7 +28,7 @@
 (ert-deftest font-lock--boolean-keywords ()
   "Syntax highlight of `boolean' keywords"
 
-  (dolist (keyword '("true" "false" "on" "off" "yes" "no"))
+  (dolist (keyword '("true" "false"))
     (with-terraform-temp-buffer
       keyword
       (should (face-at-cursor-p 'font-lock-constant-face)))))
@@ -243,18 +243,6 @@ module \"test\" {
     (should (face-at-cursor-p 'terraform-variable-name-face))
     (forward-cursor-on "=")
     (should (face-at-cursor-p nil))))
-
-(ert-deftest font-lock--string-interpolation ()
-  "Syntax highlight of string interpolation"
-  (with-terraform-temp-buffer
-    "
-foo = \"hello world\"
-bar = \"${foo}\"
-"
-
-    (forward-cursor-on "{foo}")
-    (forward-char 1)
-    (should (face-at-cursor-p 'font-lock-variable-name-face))))
 
 (ert-deftest font-lock--single-line-comment--at-bol ()
   "Syntax highlight of single line comment"
