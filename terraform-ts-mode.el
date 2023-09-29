@@ -171,7 +171,7 @@
    :feature 'blocks
    `(
      ((attribute (identifier) @terraform-builtin-face) (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-attributes) eol)) @terraform-builtin-face))
-     ((attribute (identifier) @fterraform-variable-name-face))
+     ((attribute (identifier) @terraform-variable-name-face))
      )
    
    :language 'terraform
