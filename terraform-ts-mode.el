@@ -47,12 +47,13 @@
   :link '(url-link "https://www.terraform.io/")
   :group 'languages)
 
+;; module customizions
+
 (defcustom terraform-ts-mode-hook nil
   "Hook called by `terraform-ts-mode'."
   :type 'hook
   :group 'terraform)
 
-;; CUSTOM VAR
 (defcustom terraform-ts-indent-level 2
   "The tab width to use when indenting."
   :type 'integer
@@ -62,6 +63,36 @@
   "Format buffer on save"
   :type 'boolean
   :group 'terraform)
+
+;; module facses
+
+(defface terraform-resource-type-face
+  '((t :inherit font-lock-type-face))
+  "Face for resource names."
+  :group 'terraform-mode)
+
+(define-obsolete-face-alias 'terraform--resource-type-face 'terraform-resource-type-face "1.0.0")
+
+(defface terraform-resource-name-face
+  '((t :inherit font-lock-function-name-face))
+  "Face for resource names."
+  :group 'terraform-mode)
+
+(define-obsolete-face-alias 'terraform--resource-name-face 'terraform-resource-name-face "1.0.0")
+
+(defface terraform-builtin-face
+  '((t :inherit font-lock-builtin-face))
+  "Face for builtins."
+  :group 'terraform-mode)
+
+(define-obsolete-face-alias 'terraform--builtin-face 'terraform-builtin-face "1.0.0")
+
+(defface terraform-variable-name-face
+  '((t :inherit font-lock-variable-name-face))
+  "Face for varriables."
+  :group 'terraform-mode)
+
+;; mode vars 
 
 (defvar terraform-ts--syntax-table
   (let ((table (make-syntax-table)))
@@ -146,13 +177,13 @@
    :language 'terraform
    :feature 'blocks
    '(
-     ((block (identifier) @font-lock-keyword-face (string_lit (template_literal) @font-lock-type-face) (string_lit (template_literal) @font-lock-function-name-face)))
+     ((block (identifier) @terraform-builtin-face (string_lit (template_literal) @font-lock-type-face) (string_lit (template_literal) @font-lock-function-name-face)))
     )
    
    :language 'terraform
    :feature 'blocks
    '(
-     ((block (identifier) @font-lock-keyword-face (string_lit (template_literal) @font-lock-function-name-face) :?))
+     ((block (identifier) @terraform-builtin-face (string_lit (template_literal) @font-lock-function-name-face) :?))
     )
 
    :language 'terraform
