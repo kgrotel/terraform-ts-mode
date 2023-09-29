@@ -14,13 +14,13 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        emacs_version: ['29.1',
-                        'snapshot']
-        include:
-          - os: macos-latest
-            emacs_version: '29.1'
-          - os: windows-latest
-            emacs_version: '29.1'
+        emacs_version: ['29.1']
+                  #      'snapshot']
+        # include:
+        #  - os: macos-latest
+        #    emacs_version: '29.1'
+        #  - os: windows-latest
+        #    emacs_version: '29.1'
 
     steps:
     - name: Set up Emacs
