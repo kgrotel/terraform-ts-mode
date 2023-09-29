@@ -124,7 +124,7 @@ from_port = 22
   "Indent for map entry"
   (with-terraform-temp-buffer
     "
-map_var {
+map_var = {
 key = val
 }
 "
@@ -137,7 +137,7 @@ key = val
   "Indent for array element"
   (with-terraform-temp-buffer
     "
-array_var [
+array_var = [
 \"foo\"
 ]
 "
