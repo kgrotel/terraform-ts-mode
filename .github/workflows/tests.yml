@@ -36,7 +36,7 @@ jobs:
 
     - name: Test the project
       run: |
-        eldev -p -vTC test --expect 9
+        eldev -p -TC test --expect 9
         eldev -vTC compile --warnings-as-errors
 
     - name: Ensure that copyright notices are up-to-date
