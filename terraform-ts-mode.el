@@ -196,7 +196,7 @@
 
   ;; treesit - check grammar is readdy if not most likly in need to be installed
   (unless (treesit-ready-p 'terraform)
-    (treesit-install-language-grammar terraform))
+    (treesit-install-language-grammar 'terraform))
 
   ;; treesit - init parser
   (treesit-parser-create 'terraform)
