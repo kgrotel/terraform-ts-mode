@@ -232,4 +232,5 @@
 (if (treesit-ready-p 'terraform) (add-to-list 'auto-mode-alist '("\\.tf\\(vars\\)?\\'" . terraform-ts-mode)))
  
 (provide 'terraform-ts-mode)
+
 ;;; terraform-ts-mode.el ends here
