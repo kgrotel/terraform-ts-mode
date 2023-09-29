@@ -24,12 +24,12 @@
 (require 'terraform-ts-mode)
 
 (defmacro with-terraform-temp-buffer (code &rest body)
-  "Insert `code' and enable `terraform-mode'. cursor is beginning of buffer"
+  "Insert `code' and enable `terraform-ts-mode'. cursor is beginning of buffer"
   (declare (indent 0) (debug t))
   `(with-temp-buffer
      (insert ,code)
      (goto-char (point-min))
-     (terraform-mode)
+     (terraform-ts-mode)
      (font-lock-fontify-buffer)
      ,@body))
 
