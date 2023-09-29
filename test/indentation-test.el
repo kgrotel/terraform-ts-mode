@@ -144,20 +144,23 @@ array_var [
 
     (forward-cursor-on "foo")
     (call-interactively 'indent-for-tab-command)
-    (should (= (current-indentation) terraform-indent-level))))
+    (should (= (current-indentation) terraform-ts-indent-level))))
 
-(ert-deftest indentation--change-indent-size ()
-  "Indent for array element"
-  (let ((terraform-indent-level 4))
-    (with-terraform-temp-buffer
-      "
-array_var [
-\"foo\"
-]
-"
-      (forward-cursor-on "foo")
-      (call-interactively 'indent-for-tab-command)
-      (should (= (current-indentation) 4)))))
+;; due to terraform-ls limitation changing idndent is currently not
+;; supposed
+
+;; (ert-deftest indentation--change-indent-size ()
+;;   "Indent for array element"
+;;   (let ((terraform-indent-level 4))
+;;     (with-terraform-temp-buffer
+;;       "
+;; array_var [
+;; \"foo\"
+;; ]
+;; "
+;;      (forward-cursor-on "foo")
+;;      (call-interactively 'indent-for-tab-command)
+;;      (should (= (current-indentation) 4)))))
 
 (provide 'indentation-test)
 ;;; indentation-test.el ends here
