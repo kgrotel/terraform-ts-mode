@@ -187,7 +187,7 @@
      ((parent-is "touple") parent-bol ,terraform-ts-indent-level)
      ((parent-is "block") parent-bol ,terraform-ts-indent-level))))
 
-;; MODE
+;; Major Mode def 
 (define-derived-mode terraform-ts-mode prog-mode "Terraform"
   "Terraform Tresitter Mode"
   :group 'terraform
@@ -204,17 +204,17 @@
   ;; treesit - init parser
   (treesit-parser-create 'terraform)
   
-  ;; eglot integration
+  ;; eglot - integrate mode into terraform-ts-mode
   (add-hook 'terraform-ts-mode-hook 'eglot-ensure)
   (with-eval-after-load 'eglot
     (put 'terraform-ts-mode 'eglot-language-id "terraform")
     (add-to-list 'eglot-server-programs
 		 '(terraform-ts-mode . ("terraform-ls" "serve"))))
 
-  ;; eglot integration - format on save
+  ;; eglot - use format on save
   (if terraform-ts-format-on-save
     (add-hook 'before-save-hook 'eglot-format)
-    (remove-hook 'before-save-hook 'eglot-format) ))
+    (remove-hook 'before-save-hook 'eglot-format))
   
   (setq-local comment-start "#")
   (setq-local comment-use-syntax t)
