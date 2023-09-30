@@ -14,13 +14,13 @@ In case treesitter terraform grammar is not installed it will be installed.
 
 - Syntax highlighting
 - Indentation
-- format on save (via eglot)
+- format on save (via eglot-format)
 - Code Suggestions
 
-## Notes & Ussues
+## Notes & Usage
 
-- regarding iddentation: terraform-ls doesnt support indentation aside 2 which meansindentation should not be changed. Never the less treesit-identation is set but only correct identation while editing
-- currently only treesit default imenu is used which is not fitting very well
+- regarding indentation: terraform-ls and with it eglot-format does not support indentation aside 2 which means indentation should not be changed. Nevertheless treesit-identation is set but only correct identation while editing
+- currently eglot auto creates imenu which is not fitting very well (working on this is next)
 
 ## Contribute
 
