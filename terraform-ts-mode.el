@@ -60,7 +60,12 @@
   :group 'terraform)
 
 (defcustom terraform-ts-format-on-save t
-  "Format buffer on save"
+  "Format buffer on save using eglot-format"
+  :type 'boolean
+  :group 'terraform)
+
+(defcustom terraform-ts-eglot-debug nil
+  "diasable debugging of eglot (mostly eglot logging) to improve performance"
   :type 'boolean
   :group 'terraform)
 
@@ -148,11 +153,24 @@
    :language 'terraform
    :feature 'expressions 
    `(
-     ((expression (variable_expr (identifier) @terraform-builtin-face) (get_attr (identifier) @font-lock-property-name-face))
-       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-expressions) eol)) @terraform-builtin-face)) ; local, each and count
-     ((expression (variable_expr (identifier) @terraform-builtin-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* )
-       (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--named-expressions) eol)) @terraform-builtin-face)) ; module and var
-     ((expression (variable_expr (identifier) @terraform-resource-type-face) :anchor (get_attr (identifier) @font-lock-function-call-face) (get_attr (identifier) @font-lock-property-name-face) :* ))
+     ((expression (variable_expr (identifier) @terraform-builtin-face)
+		  (get_attr (identifier) @font-lock-property-name-face))
+      (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--builtin-expressions) eol)) @terraform-builtin-face)) ; local, each and count
+     
+     ((expression (variable_expr (identifier) @terraform-builtin-face)
+		  :anchor (get_attr (identifier) @font-lock-function-call-face)
+		  (get_attr (identifier) @font-lock-property-name-face) :* )
+      (:match ,(rx-to-string `(seq bol (or ,@terraform-ts--named-expressions) eol)) @terraform-builtin-face)) ; module and var
+     
+     ((expression (variable_expr (identifier) @terraform-builtin-face)
+		  :anchor (get_attr (identifier) @terraform-resource-type-face)
+		  (get_attr (identifier) @terraform-resource-name-face) 
+		  (get_attr (identifier) @font-lock-property-name-face) :* )
+      (:match "data"  @terraform-builtin-face))
+     
+     ((expression (variable_expr (identifier) @terraform-resource-type-face)
+		  :anchor (get_attr (identifier) @terraform-resource-name-face)
+		  (get_attr (identifier) @font-lock-property-name-face) :* ))  ; that should be a resource 
     )
    
    :language 'terraform
@@ -237,7 +255,14 @@
   (if terraform-ts-format-on-save
     (add-hook 'before-save-hook 'eglot-format)
     (remove-hook 'before-save-hook 'eglot-format))
-  
+
+  ;; eglot - disable debugging eglot - increase performance
+  (unless terraform-ts-eglot-debug
+    (fset #'jsonrpc--log-event #'ignore) ; disable eglot event logging
+    (setq eglot-events-buffer-size 0)    ; decrease event logging buffer (not needed see above)
+    (setq eglot-sync-connect nil)        ; disabling  waiting for eglot sync done / might mean that eglot is not avail at opening file
+  )
+
   (setq-local comment-start "#")
   (setq-local comment-use-syntax t)
   (setq-local comment-start-skip "\\(//+\\|/\\*+\\)\\s *")
