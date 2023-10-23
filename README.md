@@ -1,4 +1,5 @@
-[![License: GPL 3](https://img.shields.io/badge/license-GPL_3-green.svg)](http://www.gnu.org/licenses/gpl-3.0.txt)
+[![License: GPL 3](https://img.shields.io/badge/license-GPL_3-green.svg)](http://www.gnu.org/licenses/gpl-3.0.txt)  
+[![Tests](https://github.com/kgrotel/terraform-ts-mode/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/kgrotel/terraform-ts-mode/actions/workflows/tests.yml) - MacOS, Windows, Ubuntu - Emacs 29.1, Emacs Snapshot
 
 # terraform-ts-mode.el
 
