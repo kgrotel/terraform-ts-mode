@@ -65,7 +65,7 @@
   :group 'terraform)
 
 (defcustom terraform-ts-eglot-debug nil
-  "diasable debugging of eglot (mostly eglot logging) to improve performance"
+  "enable debugging of eglot (mostly eglot logging) will impact performance"
   :type 'boolean
   :group 'terraform)
 
@@ -94,15 +94,42 @@
 ;; mode vars 
 
 (defvar terraform-ts--syntax-table
-  (let ((table (make-syntax-table)))
-    (modify-syntax-entry ?_ "_" table)
-    (modify-syntax-entry ?- "_" table)
-    (modify-syntax-entry ?= "." table)
-    (modify-syntax-entry ?# "< b" table)
-    (modify-syntax-entry ?\n "> b" table)
-    (modify-syntax-entry ?/  ". 124b" table)
-    (modify-syntax-entry ?*  ". 23" table)    
-    table)
+  (let ((synTable (make-syntax-table)))
+    ;; Word syntax
+    (modify-syntax-entry ?_ "w" synTable)       ; underscore is always part of word (never punctiation) -> w
+    (modify-syntax-entry '(?0 . ?9) "w" synTable)
+    (modify-syntax-entry '(?a . ?z) "w" synTable)
+    (modify-syntax-entry '(?A . ?Z) "w" synTable)
+
+    ;; Punctuation 
+    (modify-syntax-entry ?- "_" synTable)       ; - can be word and punctiation -> _ class 
+    (modify-syntax-entry ?= "." synTable)
+    (modify-syntax-entry ?= "." synTable)
+
+    ;; Whitespace
+    (modify-syntax-entry ?\s " " synTable)
+    (modify-syntax-entry ?\xa0 " " synTable) ; non-breaking space
+    (modify-syntax-entry ?\t " " synTable)
+    (modify-syntax-entry ?\f " " synTable)
+    
+    ;; Brackets
+    (modify-syntax-entry ?\( "()" synTable)
+    (modify-syntax-entry ?\) ")(" synTable)
+    (modify-syntax-entry ?\[ "(]" synTable)
+    (modify-syntax-entry ?\] ")[" synTable)
+    (modify-syntax-entry ?\{ "(}" synTable)
+    (modify-syntax-entry ?\} "){" synTable)
+    
+    ;; Comments
+    (modify-syntax-entry ?# "<" synTable)        ; comment-start-class: single line comment 
+    (modify-syntax-entry ?\n ">" synTable)       ; comment-end-class: eol
+    (modify-syntax-entry ?/  ". 124" synTable)   ; punctuation but also comment: can be // or (12) or /* (1)  */ (4)
+    (modify-syntax-entry ?*  ". 23b" synTable)   ; punctuation but also comment: ca be /* (2) */ (3)
+
+    ;; Others
+    (modify-syntax-entry ?\" "\"" synTable) ; string
+    (modify-syntax-entry ?\\ "\\" synTable) ; escape
+    synTable)
   "Syntax table for `terraform-ts-mode'.")
 
 ;; Imenu
