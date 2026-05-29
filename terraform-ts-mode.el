@@ -27,7 +27,7 @@
 
 ;; This is a terraform mode using treesit. There are still quite some
 ;; Isues with using Treesitter for imenu and Highlight so any kind of
-;; help is greatly appreaciated
+;; help is greatly appreaciated.
 
 ;;; Code:
 
