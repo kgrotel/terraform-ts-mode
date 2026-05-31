@@ -1,5 +1,18 @@
 [![License: GPL 3](https://img.shields.io/badge/license-GPL_3-green.svg)](http://www.gnu.org/licenses/gpl-3.0.txt)  
 
+> [!IMPORTANT]
+> ## 📦 This repository has moved to Codeberg
+>
+> Active development of `terraform-ts-mode` now lives at
+> **<https://codeberg.org/ccbash-oss/terraform-ts-mode>**.
+>
+> This GitHub repository is **archived as of the 1.0 release**. New
+> releases, issues, and pull requests happen on Codeberg only — this
+> mirror will no longer receive updates or respond to filed issues.
+>
+> If you star or watch this repo, please move that interest over to the
+> Codeberg home so you don't miss future releases.
+
 # terraform-ts-mode.el
 
 Major mode of [Terraform](http://www.terraform.io/) configuration file. This mode uses Tresitter for syntax highlighting and eglot as LSP
